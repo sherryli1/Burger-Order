@@ -101,11 +101,20 @@ class ContactData extends Component {
       isValid = value.trim() !== '' && isValid;
     }
     if(rule.minLength){
-      isValid = value.length <= rule.minLength && isValid;
+      isValid = value.length >= rule.minLength && isValid;
     }
     if(rule.maxLength){
-      isValid = value.length >= rule.maxLength && isValid;
+      isValid = value.length <= rule.maxLength && isValid;
     }
+    if (rule.isEmail) {
+        const pattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+        isValid = pattern.test(value) && isValid
+    }
+
+    if (rule.isNumeric) {
+        const pattern = /^\d+$/;
+        isValid = pattern.test(value) && isValid
+      }
 
     return isValid;
   }
@@ -120,9 +129,10 @@ class ContactData extends Component {
     const order = {
       ingredient: this.props.ings,
       price: this.props.price,
-      orderData: formData
+      orderData: formData,
+      userId: this.props.userId
     }
-    this.props.onPurchaseStart(order);
+    this.props.onPurchaseStart(order,this.props.token);
   }
 
   inputChangeHandler = (event,identifier) =>{
@@ -182,13 +192,15 @@ const mapStateToProps = state => {
   return {
     ings: state.burgerBuilder.ingredient,
     price: state.burgerBuilder.totalPrice,
-    loading: state.order.loading
+    loading: state.order.loading,
+    token: state.auth.token,
+    userId: state.auth.userId
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    onPurchaseStart: (orderData) => dispatch(orderActions.purchaseBurger(orderData))
+    onPurchaseStart: (orderData,token) => dispatch(orderActions.purchaseBurger(orderData, token))
   }
 }
 export default connect(mapStateToProps,mapDispatchToProps)(withErrorHandler(ContactData,axios));

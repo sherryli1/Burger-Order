@@ -1,5 +1,6 @@
 //A wrapper to wrap the core elements in the screen
 import React,{ Component } from 'react';
+import { connect } from 'react-redux';
 import Aux from'../Aux/Aux';
 import classes from'./Layout.css';
 import Toolbar from '../../components/Navigation/Toolbar/Toolbar';
@@ -21,8 +22,13 @@ class Layout extends Component{
   render () {
     return(
       <Aux>
-      <Toolbar toggleDrawerClicked={this.toggleSideDrawerHandler}/>
-      <SideDrawer open={this.state.showSideDrawer} clicked={this.closeSideDrawerHandler}/>
+      <Toolbar
+        isAuth={this.props.isAuthiticated}
+        toggleDrawerClicked={this.toggleSideDrawerHandler}/>
+      <SideDrawer
+        isAuth={this.props.isAuthiticated}
+        open={this.state.showSideDrawer}
+        clicked={this.closeSideDrawerHandler}/>
       <main className = {classes.Content}>
         {this.props.children}
       </main>
@@ -31,4 +37,9 @@ class Layout extends Component{
   }
  }
 
-export default Layout;
+const mapStateToProps = state => {
+  return{
+      isAuthiticated: state.auth.token !== null
+  }
+}
+export default connect(mapStateToProps)(Layout);

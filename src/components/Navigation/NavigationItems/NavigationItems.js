@@ -4,8 +4,12 @@ import NavigationItem from './NavigationItem/NavigationItem';
 
 const navigationItems = (props) => (
   <ul className={classes.NavigationItems}>
+    {(! props.isAuthiticated)
+      ? <NavigationItem link='/auth' >Sign In</NavigationItem>
+      : <NavigationItem link='/logout' >Sign Out</NavigationItem>
+    }
     <NavigationItem link='/' exact>Burger Builder</NavigationItem>
-    <NavigationItem link='/orders' >Orders</NavigationItem>
+    {(props.isAuthiticated) ? <NavigationItem link='/orders' >Orders</NavigationItem> : null}
   </ul>
 );
 
